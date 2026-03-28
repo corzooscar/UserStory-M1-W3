@@ -174,26 +174,59 @@ def delete_product(Inventory, name):
 
     return False
 
+
 # ──── 6. Calculate inventory statistics —────────────────────────────────────────────────────────────────────────────────────
 def calculate_statistics(Inventory):
     """
-    Computes and displays key statistics about the current inventory.
+    Computes key statistics about the current inventory and returns them as a dictionary.
 
-    Calculates total inventory value (price x quantity for each product),
-    total number of units, the most expensive product, and the product
-    with the highest stock. Uses sum() with generator expressions for
-    efficiency. If the inventory is empty, notifies the user instead.
+    Iterates once over the inventory to calculate total units, total value
+    (price x quantity per product), the most expensive product, and the product
+    with the highest stock. Uses a lambda for the per-product subtotal calculation.
+    Returns None if the inventory is empty.
 
     Args:
         Inventory (list): The current list of product dictionaries.
+                          Each product must have keys: "name" (str), "price" (float), "quantity" (int).
 
     Returns:
-        None. Prints results directly to the terminal.
+        dict: A dictionary with the following keys:
+            - "total_units"    (int):   Sum of all product quantities.
+            - "total_value"    (float): Sum of price * quantity across all products.
+            - "most_expensive" (dict):  Product with the highest price {"name": str, "price": float}.
+            - "highest_stock"  (dict):  Product with the most units  {"name": str, "quantity": int}.
+        None: If Inventory is empty.
     """
-    if not Inventory:
-        print(f"{YELLOW}The inventory is currently empty. No statistics to show.{RESET}\n")
-    else:
-        total_value = sum(product["price"] * product["quantity"] for product in Inventory)
-        total_items = sum(product["quantity"] for product in Inventory)
-        print(f"{GREEN}Total inventory value: ${total_value:.2f}{RESET}")
-        print(f"{GREEN}Total number of items: {total_items}{RESET}")
+    if len(Inventory) == 0:
+        return None
+
+    total_units = 0
+    total_value = 0
+
+    subtotal = lambda p: p["price"] * p["quantity"]
+
+    most_expensive = Inventory[0]
+    highest_stock = Inventory[0]
+
+    for product in Inventory:
+        total_units += product["quantity"]
+        total_value += subtotal(product)
+
+        if product["price"] > most_expensive["price"]:
+            most_expensive = product
+
+        if product["quantity"] > highest_stock["quantity"]:
+            highest_stock = product
+
+    return {
+        "total_units": total_units,
+        "total_value": total_value,
+        "most_expensive": {
+            "name": most_expensive["name"],
+            "price": most_expensive["price"]
+        },
+        "highest_stock": {
+            "name": highest_stock["name"],
+            "quantity": highest_stock["quantity"]
+        }
+    }
