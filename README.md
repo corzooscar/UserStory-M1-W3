@@ -11,7 +11,7 @@ A terminal-based inventory management system built in Python. Supports full CRUD
 
 <div align="center">
   <h1>❇️​ Flowchart ❇️​</h1>
-  
+  <img width="3120" height="1337" alt="Semana-3-OscarCo" src="https://github.com/user-attachments/assets/bc9aa399-ed3a-4892-9986-bb8bcace3e36" />
 </div>
 
 ---
